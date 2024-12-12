@@ -38,4 +38,12 @@ public class SplineHolder : MonoBehaviour
             rend.SetPosition(i, UnityPath.PoseToVector(BezierNavigator.SplineMath.calculate(poses, i * t_res)));
         }
     }
+
+    public void changePts(Vector3[] pts)
+    {
+        for(int i = 0;i < pts.Length;i++)
+        {
+            splinePts[i].position = pts[i];
+        }
+    }
 }

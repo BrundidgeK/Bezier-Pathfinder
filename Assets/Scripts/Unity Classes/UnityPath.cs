@@ -22,8 +22,16 @@ public class UnityPath : MonoBehaviour
         finder.setRadius(robotRadius);
         finder.setSplinePoints(poses);
 
-        finder.findPath(t_Res, 100);
+        finder.findPath(t_Res, 1);
         BezierNavigator.Pose[] newSpline = finder.getSplinePoints();
+        GetComponent<SplineHolder>().changePts(
+            new Vector3[]
+            {
+                PoseToVector(newSpline[0]),
+                PoseToVector(newSpline[1]),
+                PoseToVector(newSpline[2]),
+                PoseToVector(newSpline[3])
+            });
     }
 
     public static BezierNavigator.Pose TransformToPose(Transform t)

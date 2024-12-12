@@ -24,17 +24,24 @@ namespace BezierNavigator
 
         public static bool between(Pose pt1, Pose pt2, Pose between)
         {
+            // Check bounding box constraints
             double ymin = Math.Min(pt1.y, pt2.y);
             double ymax = Math.Max(pt1.y, pt2.y);
             double xmin = Math.Min(pt1.x, pt2.x);
             double xmax = Math.Max(pt1.x, pt2.x);
 
-            return between.y >= ymin && between.y <= ymax && between.x >= xmin && between.x <= xmax;
+            if (between.y < ymin || between.y > ymax || between.x < xmin || between.x > xmax)
+            {
+                return false;
+            }
+
+            double crossProduct = (pt2.y - pt1.y) * (between.x - pt1.x) - (pt2.x - pt1.x) * (between.y - pt1.y);
+            return Math.Abs(crossProduct) < 1e-5;
         }
 
         public static double distance(Pose pt1, Pose pt2)
         {
-            return Math.Sqrt((pt1.x - pt1.x) * (pt1.x - pt1.x) + (pt1.y - pt2.y) * (pt1.y - pt2.y));
+            return Math.Sqrt((pt1.x - pt2.x) * (pt1.x - pt2.x) + (pt1.y - pt2.y) * (pt1.y - pt2.y));
         }
     }
 }
