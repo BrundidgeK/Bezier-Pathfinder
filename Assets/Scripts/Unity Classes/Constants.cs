@@ -7,6 +7,7 @@ public class Constants : MonoBehaviour
     public int gridX, gridY;
     public double t_Res;
     public double robotRadius;
+    public int maxIterations = 25;
 
     void Start()
     {
@@ -19,6 +20,7 @@ public class Constants : MonoBehaviour
         UnityPath.gridY = gridY;
         UnityPath.robotRadius = robotRadius;
         UnityPath.t_Res = t_Res;
+        UnityPath.maxIterations = maxIterations;
 
         ObstacleHolder[] holders = FindObjectsOfType<ObstacleHolder>();
         BezierNavigator.Obstacle[] obstacles = new BezierNavigator.Obstacle[holders.Length];
@@ -28,19 +30,25 @@ public class Constants : MonoBehaviour
         }
         UnityPath.obstacles = obstacles;
 
+        SplineHolder[] splines = FindObjectsOfType<SplineHolder>();
+        foreach(SplineHolder spline in splines)
+        {
+            spline.rend.endWidth = (float)(robotRadius * 2);
+            spline.rend.startWidth = (float)(robotRadius * 2);
+        }
     }
 
     void Update()
     {
-        setValues(); foreach (UnityPath p in FindObjectsOfType<UnityPath>())
-        {
-            p.findPath();
-            Debug.Log("Complete!");
-        }
+        setValues(); 
         if (Input.GetKeyDown(KeyCode.Space))
         {
             Debug.Log("Processing...");
-            
+            foreach (UnityPath p in FindObjectsOfType<UnityPath>())
+            {
+                p.findPath();
+                Debug.Log("Complete!");
+            }
         }
     }
 }

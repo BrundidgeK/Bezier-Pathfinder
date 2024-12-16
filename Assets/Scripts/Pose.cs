@@ -43,5 +43,10 @@ namespace BezierNavigator
         {
             return Math.Sqrt((pt1.x - pt2.x) * (pt1.x - pt2.x) + (pt1.y - pt2.y) * (pt1.y - pt2.y));
         }
+
+        public static Pose midPoint(Pose pt1, Pose pt2)
+        {
+            return new Pose((pt1.x + pt2.x) / 2.0, (pt2.y + pt1.y) / 2.0);
+        }
     }
 }

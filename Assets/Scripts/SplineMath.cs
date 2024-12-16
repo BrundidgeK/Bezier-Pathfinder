@@ -97,7 +97,7 @@ namespace BezierNavigator
                     {
                         if (active)
                         {
-                            //intersectTs.Add((start + (t_res * (i - 1))) / 2);
+                            intersectTs.Add((start + (t_res * (i - 1))) / 2);
                             active = false;
                         }
                     }

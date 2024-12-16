@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SplineHolder : MonoBehaviour
 {
-    private LineRenderer rend;
+    public LineRenderer rend;
     [SerializeField]
     private Transform[] splinePts;
 
