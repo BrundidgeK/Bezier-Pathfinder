@@ -9,23 +9,29 @@ public class UnityPath : MonoBehaviour
 {
     private BezierNavigator.PathFinder finder;
 
-    public static int gridX, gridY;
     public static double t_Res;
     public static double robotRadius;
     public static BezierNavigator.Obstacle[] obstacles;
     public static int maxIterations = 25;
+    public static double decayRate = .8;
+    public static double initDistance = 20;
+    public static int pointsOnCircle = 32;
 
     public BezierNavigator.Pose[] poses;
+
+    private void Start()
+    {
+        finder = new BezierNavigator.PathFinder();
+    }
 
     public void findPath()
     {
         long milliseconds = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-        finder = new BezierNavigator.PathFinder(gridX, gridY);
         finder.setObstacles(obstacles);
         finder.setRadius(robotRadius);
         finder.setSplinePoints(poses);
 
-        finder.findPath(.01, 20, .8, 32, maxIterations);
+        finder.findPath(t_Res, initDistance, decayRate, pointsOnCircle, maxIterations);
         BezierNavigator.Pose[] newSpline = finder.getSplinePoints();
         GetComponent<SplineHolder>().changePts(
             new Vector3[]
