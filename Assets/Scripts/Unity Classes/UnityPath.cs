@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Security.Cryptography;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -18,6 +19,7 @@ public class UnityPath : MonoBehaviour
     public static int pointsOnCircle = 32;
 
     public BezierNavigator.Pose[] poses;
+    public TMP_Text timeText;
 
     private void Start()
     {
@@ -42,7 +44,8 @@ public class UnityPath : MonoBehaviour
                 PoseToVector(newSpline[3])
             });
 
-        Debug.Log("Time it took in ms: " + (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - milliseconds))/1000.0);
+        double timeElasped = ((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - milliseconds) / 1000.0;
+        timeText.text = "Calculated in " + timeElasped + " seconds";
     }
 
     public static BezierNavigator.Pose TransformToPose(Transform t)

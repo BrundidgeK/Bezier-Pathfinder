@@ -109,7 +109,7 @@ public class Constants : MonoBehaviour
     {
         try
         {
-            t_Res = double.Parse(text); // Assuming t_Res was intended to be max iteration limit in the original case
+            maxIterations = int.Parse(text);
         }
         catch
         {

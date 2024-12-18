@@ -2,10 +2,18 @@
 
 namespace BezierNavigator
 {
+    /// <summary>
+    /// <c>Pose</c> a point in space
+    /// By Kennedy Brundidge
+    /// </summary>
     public class Pose
     {
         public double x, y;
-        public float he;
+        /// <summary>
+        /// Instantiates the Pose
+        /// </summary>
+        /// <param name="x">x coordinate</param>
+        /// <param name="y">y coordinate</param>
         public Pose(double x, double y)
         {
             this.x = x;
@@ -22,6 +30,13 @@ namespace BezierNavigator
             return x + ", " + y;
         }
 
+        /// <summary>
+        /// <c>between</c> checks if a point is within the bounding box created by two other points
+        /// </summary>
+        /// <param name="pt1">bounding box point 1</param>
+        /// <param name="pt2">bounding box point 2</param>
+        /// <param name="between">the point within the bounding box</param>
+        /// <returns>True if the point lies within the bounding box, and false if otherwise</returns>
         public static bool between(Pose pt1, Pose pt2, Pose between)
         {
             // Check bounding box constraints
@@ -39,11 +54,21 @@ namespace BezierNavigator
             return Math.Abs(crossProduct) < 1e-5;
         }
 
+        /// <summary>
+        /// <c>distance</c> finds the distance between two poses
+        /// </summary>
+        /// <returns>The length of the distance between</returns>
         public static double distance(Pose pt1, Pose pt2)
         {
             return Math.Sqrt((pt1.x - pt2.x) * (pt1.x - pt2.x) + (pt1.y - pt2.y) * (pt1.y - pt2.y));
         }
 
+        /// <summary>
+        /// <c>midPoint</c> finds the point in the middle of two other points
+        /// </summary>
+        /// <param name="pt1"></param>
+        /// <param name="pt2"></param>
+        /// <returns>The midpoint</returns>
         public static Pose midPoint(Pose pt1, Pose pt2)
         {
             return new Pose((pt1.x + pt2.x) / 2.0, (pt2.y + pt1.y) / 2.0);
