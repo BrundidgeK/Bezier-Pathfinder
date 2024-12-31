@@ -46,4 +46,9 @@ public class SplineHolder : MonoBehaviour
             splinePts[i].position = pts[i];
         }
     }
+
+    public Transform[] getPoints()
+    {
+        return splinePts;
+    }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine.UIElements;
 
 namespace BezierNavigator
 {
@@ -20,6 +21,33 @@ namespace BezierNavigator
             this.y = y;
         }
 
+        public static Pose operator +(Pose a, Pose b)
+        {
+            return new Pose(a.x + b.x, a.y + b.y);
+        }
+
+        public static Pose operator -(Pose a, Pose b)
+        {
+            return new Pose(a.x - b.x, a.y - b.y);
+        }
+
+        public static Pose operator *(Pose a, double scalar)
+        {
+            return new Pose(a.x * scalar, a.y * scalar);
+        }
+
+        public static Pose operator *(double scalar, Pose a)
+        {
+            return new Pose(a.x * scalar, a.y * scalar);
+        }
+
+        public static Pose operator /(Pose a, double scalar)
+        {
+            if (scalar == 0)
+                throw new DivideByZeroException("Cannot divide by zero.");
+            return new Pose(a.x / scalar, a.y / scalar);
+        }
+
         public bool equals(Pose other)
         {
             return (other.x == x && other.y == y);
@@ -27,7 +55,7 @@ namespace BezierNavigator
 
         public string toString()
         {
-            return x + ", " + y;
+            return "(" + x + ", " + y + ")";
         }
 
         /// <summary>
@@ -72,6 +100,19 @@ namespace BezierNavigator
         public static Pose midPoint(Pose pt1, Pose pt2)
         {
             return new Pose((pt1.x + pt2.x) / 2.0, (pt2.y + pt1.y) / 2.0);
+        }
+
+        public static Pose normalize(Pose pt)
+        {
+            double distance = Pose.distance(pt, new Pose(0, 0));
+            if (distance == 0)
+                return new Pose(0, 0); // Cannot normalize a zero-length vector
+            return new Pose(pt.x / distance, pt.y / distance);
+        }
+
+        public static Pose opposite(Pose pt)
+        {
+            return new Pose(-pt.x, -pt.y);
         }
     }
 }

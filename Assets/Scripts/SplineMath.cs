@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 
 
 namespace BezierNavigator
@@ -125,6 +126,43 @@ namespace BezierNavigator
             return new Pose(a.x + b.x + c.x + d.x, a.y + b.y + c.y + d.y);
         }
 
+        public static double findT(Pose[] pts, Pose point, double t_res, double tolerance)
+        {
+            double t = 0;
+            double prevT = 0;
+
+            bool run = true;
+            while(run)
+            {
+                double derivative = pts[0].x * (-3 * (t * t) + 6 * t - 3) + pts[1].x * (9 * (t * t) - 12 * t + 3) +
+                    pts[2].x * (-9 * (t * t) + 6 * t) + pts[3].x * 3 * t * t;
+                double func = pts[0].x * (1 - t) * (1 - t) * (1 - t) + pts[1].x * 3 * t * (t - 1) * (t - 1) +
+                    pts[2].x * -3 * t * t * (t - 1) + pts[3].x * t * t * t;
+
+                prevT = t;
+                t = t - (func / derivative);
+
+                if (Math.Abs(t - prevT) > t_res)
+                {
+                    Pose p = calculate(pts, t);
+                    Pose diff = new Pose(point.x - p.x, point.y - p.y);
+                    if (Pose.distance(diff, new Pose(0, 0)) <= tolerance)
+                        run = false;
+                    else
+                    {
+                        t = 1;
+                        prevT = 1;
+                    }
+                }
+                else if (prevT > 1 || prevT < 0)
+                {
+                    return prevT;
+                }
+            }
+
+            return t;
+        }
+
         /// <summary>
         /// <c>mostInfluenceControl</c> finds, between the control points, which has the most influence/impact
         /// of the spline at a given t
@@ -175,31 +213,11 @@ namespace BezierNavigator
                     // Checks if the line at the current t is colliding with obstacles
                     if (obstacle.collide(p1, p2))
                     {
-                        // If not already colliding, start tracking how long spline is colliding for
-                        if (!active)
-                        {
-                            intersectTs.Add(t_res * i);
-                            start = t_res * i;
-                            active = true;
-                        }
-                    }
-                    else
-                    {
-                        if (active)
-                        {
-                            // When there is no collision, average the start and end values of a collision
-                            intersectTs.Add((start + (t_res * (i - 1))) / 2);
-                            active = false;
-                        }
+                        intersectTs.Add(t_res * i);
                     }
                 }
             }
-            
-            //If the line ends and it is still colliding, then average the end (1) with start
-            if (active)
-            {
-                intersectTs.Add((start + 1) / 2);
-            }
+
             return intersectTs;
         }
     }

@@ -21,6 +21,9 @@ public class UnityPath : MonoBehaviour
     public BezierNavigator.Pose[] poses;
     public TMP_Text timeText;
 
+    [SerializeField]
+    public GameObject circl;
+
     private void Start()
     {
         finder = new BezierNavigator.PathFinder();
@@ -33,7 +36,8 @@ public class UnityPath : MonoBehaviour
         finder.setRadius(robotRadius);
         finder.setSplinePoints(poses);
 
-        finder.findPath(t_Res, initDistance, decayRate, pointsOnCircle, maxIterations);
+        finder.findPath(t_Res, 20, decayRate, pointsOnCircle, maxIterations);
+
         BezierNavigator.Pose[] newSpline = finder.getSplinePoints();
         GetComponent<SplineHolder>().changePts(
             new Vector3[]

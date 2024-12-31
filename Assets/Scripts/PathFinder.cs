@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting.Antlr3.Runtime.Tree;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace BezierNavigator
 {
@@ -13,6 +15,7 @@ namespace BezierNavigator
         private Pose[] poses;
         private double robotRadius;
         private Obstacle[] obstacles;
+
 
         public PathFinder()
         {
@@ -130,6 +133,7 @@ namespace BezierNavigator
             }
         }
 
+
         /// <summary>
         /// Finds the heuristic value of a point 
         /// </summary>
@@ -139,7 +143,7 @@ namespace BezierNavigator
         /// <returns>A Heuristic of the the pose</returns>
         private Heuristic calculate(Pose gridSpace, int con_focus, double t_res)
         {
-            Heuristic heuristic = new Heuristic();
+            Heuristic heuristic = new();
             // Bases the heuristic on the rest of the spline
             Pose[] splinePts = poses;
             splinePts[con_focus] = gridSpace;
@@ -163,8 +167,16 @@ namespace BezierNavigator
             // If there are none, do not count the total intersections
             // If there are, then cube the number to emphasize importance
             // Square curve length to emphasize importance of a short and optimal curve
-            heuristic.value = heuristic.influencedIntersection * heuristic.influencedIntersection * heuristic.influencedIntersection * heuristic.intersectionCount +
-                heuristic.distanceFromMain + heuristic.curveLength * heuristic.curveLength;
+            heuristic.value = heuristic.curveLength * heuristic.influencedIntersection * heuristic.intersectionCount +
+                heuristic.distanceFromMain + heuristic.curveLength;
+
+            heuristic.valuesOrdered = new double[]
+            {
+                heuristic.curveLength,
+                heuristic.distanceFromMain,
+                heuristic.intersectionCount,
+                heuristic.value,
+            };
 
             return heuristic;
         }
@@ -177,20 +189,37 @@ namespace BezierNavigator
         /// <returns>True if <c>cur</c> has lower values, false if <c>cur</c> has higher values</returns>
         private bool compareHeuristics(Heuristic cur, Heuristic refer)
         {
-            return (cur.influencedIntersection < refer.influencedIntersection || //Checks for influenced intersections 
-                        (cur.influencedIntersection == refer.influencedIntersection && (cur.value < refer.value)) || // Overall heuristic value as tie breaker
-                        (cur.value == refer.value && cur.influencedIntersection == refer.influencedIntersection 
-                        && (cur.intersectionCount < refer.intersectionCount))); // Total intersection count as 2nd tie breaker
-        }
+            if (cur.influencedIntersection < refer.influencedIntersection)
+                return true;
 
-        public struct Heuristic
+            if (cur.influencedIntersection == refer.influencedIntersection)
+            {
+                for (int i = 0; i < cur.valuesOrdered.Length; i++)
+                {
+                    if (cur.valuesOrdered[i] < refer.valuesOrdered[i])
+                        return true;
+                    else if (cur.valuesOrdered[i] > refer.valuesOrdered[i])
+                        return false;
+                }
+            }
+
+            Debug.Log("WHY");
+            
+            return false;
+        }
+        private bool compareSplineHeuristics(Heuristic cur, Heuristic refer)
         {
-            public int intersectionCount; // Number of intersections 
-            public int influencedIntersection; // Number of intersections caused by the control point
-            public double distanceFromMain; // Distance from the nearest main point
-            public double curveLength; // The length of the curve
-
-            public double value;
+            for (int i = 0; i < cur.valuesOrdered.Length; i++)
+            {
+                if (cur.valuesOrdered[i] < refer.valuesOrdered[i])
+                    return true;
+                else if (cur.valuesOrdered[i] > refer.valuesOrdered[i])
+                    return false;
+            }
+            
+            return false;
         }
+
+        
     }
 }
